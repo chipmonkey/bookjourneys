@@ -1,0 +1,15 @@
+# Compose file (a la docker-compose or podman-compose) for single development environment
+
+version: "3"
+services:
+  client:
+    build:
+      context: ..
+      dockerfile: ./containers/client-dockerfile.yml
+    container_name: containers-client-1
+    working_dir: /home/build
+    volumes:
+      - ../:/home/build
+    ports:
+      - "4173:4173"
+    command: bash -c "cd /home/node/app && npm run preview --host"
