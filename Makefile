@@ -5,8 +5,14 @@
 help:  ## Print out this helpful little chart
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-dev-start:  ## Start local development environment
-	cd client/bookjourneys && npm run dev
+dev-rebuild:  ## Build containers for local environment
+	docker-compose -f ./containers/dev-compose.yml up -d --build --remove-orphans
 
-test:  ## Run all tests
-	cd client/bookjourneys && npm run lint
+dev-start:  ## Start local development environment
+	docker-compose -f ./containers/dev-compose.yml up -d --no-recreate
+
+dev-stop:  ## Stop the presses!
+	docker-compose -f ./containers/dev-compose.yml down
+
+test: dev-start  ## Run all tests
+	docker exec -t containers-client-1 bash -c "cd /home/node/app && npm run lint"
